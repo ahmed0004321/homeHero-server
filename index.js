@@ -53,6 +53,10 @@ async function run() {
       }
       const result = await servicesCollection.find({email: email}).toArray();
       res.send(result);
+    });
+    app.get('/home', async (req, res) => {
+      const allService = await servicesCollection.find().limit(6).toArray();
+      res.send(allService);
     })
     //API's
     app.get("/", (req, res) => {
