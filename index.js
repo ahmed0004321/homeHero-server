@@ -39,6 +39,21 @@ async function run() {
       const result = await servicesCollection.insertOne(serviceData);
       res.send(result);
     });
+
+    app.get('/allServices', async (req, res) => {
+      const allServiceData = servicesCollection.find();
+      const result = await allServiceData.toArray();
+      res.send(result);
+    });
+
+    app.get('/myServices', async (req, res) => {
+      const email = req.query.email;
+      if(!email){
+        res.send('email is required');
+      }
+      const result = await servicesCollection.find({email: email}).toArray();
+      res.send(result);
+    })
     //API's
     app.get("/", (req, res) => {
       res.send("server is running and get also working");
