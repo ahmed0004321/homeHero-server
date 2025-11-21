@@ -2,7 +2,7 @@ const express = require("express");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const cors = require("cors");
-const port = process.env.port || 3000;
+const port = process.env.PORT || 3000;
 
 //middleware
 app.use(cors());
@@ -33,19 +33,10 @@ async function run() {
     const servicesCollection = db.collection("services");
 
     //here will have all the API
-    app.post("/addServices/", async (req, res) => {
-      const data = {
-        serviceName: "AC Repair & Maintenance",
-        category: "HVAC",
-        price: 90,
-        description:
-          "Air conditioning repair, installation, and maintenance services. We service all major brands and ensure optimal cooling efficiency for your home.",
-        imageUrl:
-          "https://images.unsplash.com/photo-1631545806609-4c036b4d2e8b?w=800",
-        providerName: "James Wilson",
-        email: "james.wilson@homehero.com",
-      };
-      const result = await servicesCollection.insertOne(data);
+    app.post("/addServices", async (req, res) => {
+      const serviceData = req.body;
+      console.log(serviceData);
+      const result = await servicesCollection.insertOne(serviceData);
       res.send(result);
     });
     //API's
@@ -65,6 +56,6 @@ async function run() {
 run().catch(console.dir);
 
 //listen PORT
-app.listen(port, (req, res) => {
-  console.log(`server is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
