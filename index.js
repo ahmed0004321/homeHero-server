@@ -77,6 +77,11 @@ async function run() {
       }
       const result = await servicesCollection.updateOne(query, updateService);
       res.send(result);
+    });
+    app.get('/servicesDetails/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await servicesCollection.findOne({_id: new ObjectId(id)});
+      res.send(result);
     })
     //API's
     app.get("/", (req, res) => {
