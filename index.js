@@ -62,6 +62,21 @@ async function run() {
       const {id} = req.query;
       const result = await servicesCollection.deleteOne({_id: new ObjectId(id)});
       res.send(result);
+    });
+    app.get('/myServicesUpdate/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await servicesCollection.findOne({_id: new ObjectId(id)});
+      res.send(result);
+    })
+    app.put('/myServicesUpdate/:id', async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = {_id: new ObjectId(id)};
+      const updateService = {
+        $set: data
+      }
+      const result = await servicesCollection.updateOne(query, updateService);
+      res.send(result);
     })
     //API's
     app.get("/", (req, res) => {
