@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
@@ -57,6 +57,11 @@ async function run() {
     app.get('/home', async (req, res) => {
       const allService = await servicesCollection.find().limit(6).toArray();
       res.send(allService);
+    });
+    app.delete('/myServicesDelete', async (req, res) => {
+      const {id} = req.query;
+      const result = await servicesCollection.deleteOne({_id: new ObjectId(id)});
+      res.send(result);
     })
     //API's
     app.get("/", (req, res) => {
