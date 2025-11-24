@@ -31,7 +31,7 @@ async function run() {
     //database collections
     const db = client.db("homeHero_DB");
     const servicesCollection = db.collection("services");
-    const bookingCollection = db.collection('bookings');
+    const bookingCollection = db.collection("bookings");
 
     //here will have all the API
     app.post("/addServices", async (req, res) => {
@@ -41,56 +41,88 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/allServices', async (req, res) => {
+    app.get("/allServices", async (req, res) => {
       const allServiceData = servicesCollection.find();
       const result = await allServiceData.toArray();
       res.send(result);
     });
 
-    app.get('/myServices', async (req, res) => {
+    app.get("/myServices", async (req, res) => {
       const email = req.query.email;
-      if(!email){
-        res.send('email is required');
+      if (!email) {
+        res.send("email is required");
       }
-      const result = await servicesCollection.find({email: email}).toArray();
+      const result = await servicesCollection.find({ email: email }).toArray();
       res.send(result);
     });
-    app.get('/home', async (req, res) => {
+    app.get("/home", async (req, res) => {
       const allService = await servicesCollection.find().limit(6).toArray();
       res.send(allService);
     });
-    app.delete('/myServicesDelete', async (req, res) => {
-      const {id} = req.query;
-      const result = await servicesCollection.deleteOne({_id: new ObjectId(id)});
+    app.delete("/myServicesDelete", async (req, res) => {
+      const { id } = req.query;
+      const result = await servicesCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
-    app.get('/myServicesUpdate/:id', async (req, res) => {
+    app.get("/myServicesUpdate/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await servicesCollection.findOne({_id: new ObjectId(id)});
+      const result = await servicesCollection.findOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
-    })
-    app.put('/myServicesUpdate/:id', async (req, res) => {
+    });
+    app.put("/myServicesUpdate/:id", async (req, res) => {
       const id = req.params.id;
       const data = req.body;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateService = {
-        $set: data
-      }
+        $set: data,
+      };
       const result = await servicesCollection.updateOne(query, updateService);
       res.send(result);
     });
-    app.get('/servicesDetails/:id', async (req, res) => {
+    app.get("/servicesDetails/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await servicesCollection.findOne({_id: new ObjectId(id)});
+      const result = await servicesCollection.findOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
 
     //Booking API's
-    app.post('/bookings', async (req, res) => {
+    app.post("/bookings", async (req, res) => {
       const bookingData = req.body;
       const result = await bookingCollection.insertOne(bookingData);
       res.send(result);
-    })
+    });
+    app.get("/myBookings", async (req, res) => {
+      try {
+        const result = await bookingCollection
+          .aggregate([
+            {
+              $addFields: {
+                serviceObjId: { $toObjectId: "$serviceId" },
+              },
+            },
+            {
+              $lookup: {
+                from: "services",
+                localField: "serviceObjId",
+                foreignField: "_id",
+                as: "serviceDetails",
+              },
+            },
+            { $unwind: "$serviceDetails" },
+          ])
+          .toArray();
+        res.send(result);
+      } catch (error) {
+        console.log(error);
+        res.send("Error fetching bookings");
+      }
+    });
     //API's
     app.get("/", (req, res) => {
       res.send("server is running and get also working");
