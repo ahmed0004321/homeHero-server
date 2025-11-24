@@ -31,6 +31,7 @@ async function run() {
     //database collections
     const db = client.db("homeHero_DB");
     const servicesCollection = db.collection("services");
+    const bookingCollection = db.collection('bookings');
 
     //here will have all the API
     app.post("/addServices", async (req, res) => {
@@ -81,6 +82,13 @@ async function run() {
     app.get('/servicesDetails/:id', async (req, res) => {
       const id = req.params.id;
       const result = await servicesCollection.findOne({_id: new ObjectId(id)});
+      res.send(result);
+    });
+
+    //Booking API's
+    app.post('/bookings', async (req, res) => {
+      const bookingData = req.body;
+      const result = await bookingCollection.insertOne(bookingData);
       res.send(result);
     })
     //API's
