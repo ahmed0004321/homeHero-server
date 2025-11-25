@@ -57,8 +57,16 @@ async function run() {
     });
 
     app.get("/allServices", async (req, res) => {
-      const allServiceData = servicesCollection.find();
-      const result = await allServiceData.toArray();
+      const { minPrice, maxPrice } = req.query;
+
+      let query = {};
+      if (minPrice || maxPrice) {
+        query.price = {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
+      }
+
+      const result = await servicesCollection.find(query).toArray();
       res.send(result);
     });
 
