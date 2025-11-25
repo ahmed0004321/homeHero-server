@@ -9,11 +9,16 @@ const port = process.env.PORT || 3000;
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // Your local development
+      "http://localhost:5173",
       "http://localhost:3000",
-      "https://homehero-api-project-server.vercel.app/", // Your deployed frontend  // If you have a custom domain
+      "http://localhost:5174",
+      "https://homehero-api-project-server.vercel.app/", // Firebase default domain
+      "https://home-hero-client-39a3d.web.app", // Firebase alternative domain
+      "https://your-custom-domain.com", // If you have a custom domain
     ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json());
@@ -36,7 +41,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     //database collections
     const db = client.db("homeHero_DB");
     const servicesCollection = db.collection("services");
