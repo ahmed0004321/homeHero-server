@@ -135,13 +135,9 @@ async function run() {
       const result = await bookingCollection.findOne({ userEmail, serviceId });
       res.send(!!result);
     });
-    //API's
-    app.get("/", (req, res) => {
-      res.send("server is running and get also working");
-    });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
@@ -150,6 +146,11 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+//API's
+app.get("/", (req, res) => {
+  res.send("server is running and get also working");
+});
 
 //listen PORT
 app.listen(port, () => {
