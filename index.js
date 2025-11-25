@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
@@ -12,8 +13,7 @@ app.use(express.json());
 //homeHeroDB
 //yOCKMNK4xyPdx3PQ
 
-const uri =
-  "mongodb+srv://homeHeroDB:yOCKMNK4xyPdx3PQ@cluster007.lqqnzz4.mongodb.net/?appName=Cluster007";
+const uri = process.env.MONGO_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -123,16 +123,18 @@ async function run() {
         res.send("Error fetching bookings");
       }
     });
-    app.delete('/mybookings', async (req, res) => {
+    app.delete("/mybookings", async (req, res) => {
       const id = req.query;
-      const result = await bookingCollection.deleteOne({_id: new ObjectId(id)});
+      const result = await bookingCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
-    app.get('/isBooked', async (req, res) => {
-      const {userEmail, serviceId} = req.query;
-      const result = await bookingCollection.findOne({userEmail, serviceId});
+    app.get("/isBooked", async (req, res) => {
+      const { userEmail, serviceId } = req.query;
+      const result = await bookingCollection.findOne({ userEmail, serviceId });
       res.send(!!result);
-    })
+    });
     //API's
     app.get("/", (req, res) => {
       res.send("server is running and get also working");
