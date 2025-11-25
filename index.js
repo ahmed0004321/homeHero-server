@@ -6,7 +6,16 @@ const cors = require("cors");
 const port = process.env.PORT || 3000;
 
 //middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // Your local development
+      "http://localhost:3000",
+      "https://homehero-api-project-server.vercel.app/", // Your deployed frontend  // If you have a custom domain
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 //mongodb connection's
@@ -33,6 +42,7 @@ async function run() {
     const servicesCollection = db.collection("services");
     const bookingCollection = db.collection("bookings");
 
+    app.get("/api/", (req, res) => res.send("Serverless backend working"));
     //here will have all the API
     app.post("/addServices", async (req, res) => {
       const serviceData = req.body;
